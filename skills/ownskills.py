@@ -175,6 +175,7 @@ angleOne = ['I', [8, -20, 0, 0, 9, -20, 10, 20, 11, 20, 14, 80, 15, 80], 1]
 angleTwo = ['I', [8, 20, 0, 40, 9, 20, 10, 50, 11, 50, 14, 60, 15, 60], 1]
 sit = ['ksit']
 
+
 # def translate_list(lst):
 #     translated_items = []
 #     for item in lst:
