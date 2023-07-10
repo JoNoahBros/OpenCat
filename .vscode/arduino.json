@@ -1,0 +1,5 @@
+{
+    "board": "arduino:avr:uno",
+    "sketch": "OpenCat.ino",
+    "port": "/dev/tty.usbserial-14340"
+}
