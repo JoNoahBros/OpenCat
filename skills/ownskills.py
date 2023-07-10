@@ -3,7 +3,7 @@
 
 import sys
 import socket
-import pyBittle
+#import pyBittle
 # importing the requests library
 import requests
 import time
@@ -189,8 +189,8 @@ sit = ['ksit']
 
 angleOne = ['m', [8, -15, 9, -20], 1]
 
-sndRest = pyBittle.Bittle.send_msg_wifi('k','krest')
-print(sndRest)
+# sndRest = pyBittle.Bittle.send_msg_wifi('k','krest')
+# print(sndRest)
 def translate_list(lst):
     translated_items = []
     for item in lst:
