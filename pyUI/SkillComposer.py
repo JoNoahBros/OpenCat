@@ -5,16 +5,23 @@
 # Petoi LLC
 # May.22nd, 2022
 import sys
+import time
+from tkinter import ttk
+
+from pyUI.FirmwareUploader import Uploader
+from serialMaster import config
+from serialMaster.ardSerial import *
+
 sys.path.append('../serialMaster/')
 import random
 import tkinter.font as tkFont
 import copy
 import threading
-from tkinter.filedialog import asksaveasfile, askopenfilename
+from tkinter.filedialog import *
 from tkinter.colorchooser import askcolor
 from commonVar import *
 import re
-from tkinter import ttk
+from tkinter import *
 language = languageList['English']
 def txt(key):
     return language.get(key, textEN[key])

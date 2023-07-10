@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 from commonVar import *
+from serialMaster.ardSerial import *
 
 language = languageList['English']
 
