@@ -193,7 +193,7 @@ void reaction() {
           else {  // turn on the manual color mode
             manualEyeColorQ = true;
             long color = ((long)(uint8_t(newCmd[0])) << 16) + ((long)(uint8_t(newCmd[1])) << 8) + (long)(uint8_t(newCmd[2]));
-            mRUS04.SetRgbEffect(E_RGB_INDEX(uint8_t(newCmd[3])), color, uint8_t(newCmd[4]));
+            ultrasonic.SetRgbEffect(E_RGB_INDEX(uint8_t(newCmd[3])), color, uint8_t(newCmd[4]));
           }
           break;
         }
@@ -310,22 +310,27 @@ void reaction() {
               }
 #endif
               else if (token == T_BEEP) {
-                if (target[1])
+                if (inLen == 0)  //toggle the melody on/off
+                                 //the terminator of upper-case tokens is not '\n'. it may cause error when entered in the Arduino serial monitor
+                  EEPROM.update(BOOTUP_SOUND_STATE, !eeprom(BOOTUP_SOUND_STATE));
+                else if (target[1])
                   beep(target[0], 1000 / target[1]);
               }
 
 #ifdef T_TUNER
               else if (token == T_TUNER) {
-                *par[target[0]] = target[1];
-                PT(target[0]);
-                PT('\t');
-                PTL(target[1]);
+                if (inLen > 1) {
+                  *par[target[0]] = target[1];
+                  PT(target[0]);
+                  PT('\t');
+                  PTL(target[1]);
+                }
               }
 #endif
             } while (pch != NULL);
 #ifdef T_TUNER
             if (token == T_TUNER) {
-              for (byte p = 0; p < 6; p++) {
+              for (byte p = 0; p < sizeof(initPars) / sizeof(int8_t); p++) {
                 PT(*par[p]);
                 PT('\t');
               }
@@ -402,6 +407,27 @@ void reaction() {
           }
           break;
         }
+      case EXTENSION:
+        {
+          switch (newCmd[0]) {
+#ifdef VOICE
+            case EXTENSION_VOICE:
+              {
+                set_voice();
+                break;
+              }
+#endif
+#ifdef ULTRASONIC
+            case EXTENSION_ULTRASONIC:
+              {
+                PT('=');
+                PTL(readUltrasonic((int8_t)newCmd[1], (int8_t)newCmd[2]));
+                break;
+              }
+#endif
+          }
+          break;
+        }
 #ifdef BINARY_COMMAND
       case T_LISTED_BIN:
         {
@@ -412,13 +438,8 @@ void reaction() {
         }
       case T_BEEP_BIN:
         {
-          if (cmdLen < 2)  //toggle the melody on/off
-                           //the terminator of upper-case tokens is not '\n'. it may cause error when entered in the Arduino serial monitor
-            EEPROM.update(BOOTUP_SOUND_STATE, !eeprom(BOOTUP_SOUND_STATE));
-          else {
-            for (byte b = 0; b < cmdLen / 2; b++)
-              beep(newCmd[2 * b], 1000 / newCmd[2 * b + 1]);
-          }
+          for (byte b = 0; b < cmdLen / 2; b++)
+            beep(newCmd[2 * b], 1000 / newCmd[2 * b + 1]);
           break;
         }
 #ifdef T_TEMP

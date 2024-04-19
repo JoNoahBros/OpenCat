@@ -45,6 +45,7 @@ axisDisable = {
 NaJoints = {
     'Nybble': [3, 4, 5, 6, 7],
     'Bittle': [1, 2, 3, 4, 5, 6, 7],
+    'Bittle X': [1, 2, 3, 4, 5, 6, 7],
     'DoF16' : []
 }
 jointConfig = {
@@ -68,7 +69,7 @@ animalNames = [  # used for memorizing individual frames
     'pig', 'rabbit', 'sheep', 'tiger', 'whale', 'wolf', 'zebra']
 WORDS = animalNames
 
-    
+
 class SkillComposer:
     def __init__(self,model, lan):
         global language
@@ -81,6 +82,39 @@ class SkillComposer:
                 print('Use Bittle as default model')
             time.sleep(0.01)
         self.model = config.model_
+        try:
+            with open(defaultConfPath, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+                # f.close()
+            lines = [line.split('\n')[0] for line in lines]  # remove the '\n' at the end of each line
+            num = len(lines)
+            logger.debug(f"len(lines): {num}")
+            self.defaultLan = lines[0]
+            self.defaultPath = lines[2]
+            self.defaultSwVer = lines[3]
+            self.defaultBdVer = lines[4]
+            self.defaultMode = lines[5]
+            if len(lines) >= 8:
+                self.defaultCreator = lines[6]
+                self.defaultLocation = lines[7]
+            else:
+                self.defaultCreator = txt('Nature')
+                self.defaultLocation = txt('Earth')
+
+            self.configuration = [self.defaultLan, self.model, self.defaultPath, self.defaultSwVer, self.defaultBdVer,
+                                  self.defaultMode, self.defaultCreator, self.defaultLocation]
+
+        except Exception as e:
+            print('Create configuration file')
+            self.defaultLan = 'English'
+            self.defaultPath = releasePath[:-1]
+            self.defaultSwVer = '2.0'
+            self.defaultBdVer = NyBoard_version
+            self.defaultMode = 'Standard'
+            self.defaultCreator = txt('Nature')
+            self.defaultLocation = txt('Earth')
+            self.configuration = [self.defaultLan, self.model, self.defaultPath, self.defaultSwVer, self.defaultBdVer,
+                                  self.defaultMode, self.defaultCreator, self.defaultLocation]
         self.postureTable = postureDict[self.model]
         ports = goodPorts
         self.window = Tk()
@@ -93,6 +127,12 @@ class SkillComposer:
         self.previousBinderValue = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ]
         self.keepChecking = True
         self.ready = 0
+        self.creatorInfoAcquired = False
+        self.creator = StringVar()
+        self.location = StringVar()
+        self.creator.set(txt('Nature'))
+        self.location.set(txt('Earth'))
+
         self.OSname = self.window.call('tk', 'windowingsystem')
         print(self.OSname)
         self.window.geometry('+100+10')
@@ -176,8 +216,9 @@ class SkillComposer:
         if res != -1 and res[0] == 'G':
             res = send(goodPorts, ['G', 0])
             printH("gyro status:",res )
-        
+        self.window.focus_force()    # force the main interface to get focus
         self.window.mainloop()
+
 
     def createMenu(self):
         self.menubar = Menu(self.window, background='#ff8000', foreground='black', activebackground='white',
@@ -572,6 +613,8 @@ class SkillComposer:
             global triggerAxis
             inv_triggerAxis = {txt(v): k for k, v in triggerAxis.items()}
             language = languageList[l]
+            self.defaultLan = l
+            logger.debug(f"{self.defaultLan}")
             self.window.title(txt('skillComposerTitle'))
             self.menubar.destroy()
             self.controllerLabels[0].config(text=txt('Joint Controller'))
@@ -633,6 +676,8 @@ class SkillComposer:
 
     def changeModel(self, modelName):
         if self.ready and modelName != self.model:
+            if 'Bittle' in modelName:
+                modelName = 'Bittle'
             self.model = copy.deepcopy(modelName)
             self.postureTable = postureDict[self.model]
             self.framePosture.destroy()
@@ -1094,26 +1139,29 @@ class SkillComposer:
     
     def changeColor(self,i):
         colorTuple = askcolor(title="Tkinter Color Chooser")
-        colors = list(colorTuple[0])
-        self.colorHex = colorTuple[1]
-#        for c in range(3):
-#            colors[c] //= 2    #it's not always returning interger.
-#        colors = list(map(lambda x:int(x//2),colors)) #colors have to be integer
-#        printH('RGB: ',colors)
-        if self.colorBinderValue.get():
-            self.activeEye = 0
-            self.eyeColors[0]=colors
-            for c in range(2):
-                self.canvasFace.itemconfig(self.eyes[c], fill=self.colorHex)
-                self.eyeColors[c+1] = colors
-                self.eyeBtn[c].config(text = str(colors))
-            send(ports, ['C', colors+[0,3], 0])
-        else:
-            self.activeEye = i
-            self.canvasFace.itemconfig(self.eyes[i], fill=self.colorHex)
-            self.eyeColors[i+1] = colors
-            self.eyeBtn[i].config(text = str(colors))
-            send(ports, ['C', colors+[i+1,3], 0])
+        logger.debug(f"colorTuple: {colorTuple}")
+        self.topEye.focus_force()  # the eye color edit window gets focus
+        if (colorTuple[0] is not None) and (colorTuple[1] is not None):
+            colors = list(colorTuple[0])
+            self.colorHex = colorTuple[1]
+            # for c in range(3):
+            #     colors[c] //= 2    #it's not always returning interger.
+            colors = list(map(lambda x: int(x), colors))  # colors have to be integer
+            logger.debug(f"RGB: {colors}")
+            if self.colorBinderValue.get():
+                self.activeEye = 0
+                self.eyeColors[0]=colors
+                for c in range(2):
+                    self.canvasFace.itemconfig(self.eyes[c], fill=self.colorHex)
+                    self.eyeColors[c+1] = colors
+                    self.eyeBtn[c].config(text = str(colors))
+                send(ports, ['C', colors+[0,3], 0])
+            else:
+                self.activeEye = i
+                self.canvasFace.itemconfig(self.eyes[i], fill=self.colorHex)
+                self.eyeColors[i+1] = colors
+                self.eyeBtn[i].config(text = str(colors))
+                send(ports, ['C', colors+[i+1,3], 0])
 
     def changeEffect(self,e):
         if self.colorBinderValue.get():
@@ -1152,10 +1200,10 @@ class SkillComposer:
         width = dia*2 + gap + 2*crd[0]
         self.eyeColors = [[0,0,0],[0,0,0],[0,0,0]]
         self.activeEye = 0
-        topEye = Toplevel(self.window)
-        topEye.title('Eye Color Setter')
-        topEye.geometry(str(width)+'x170+400+200')
-        face = Frame(topEye)
+        self.topEye = Toplevel(self.window)
+        self.topEye.title('Eye Color Setter')
+        self.topEye.geometry(str(width)+'x170+400+200')
+        face = Frame(self.topEye)
         face.grid(row = 0,column = 0)
         self.canvasFace = Canvas(face,height=120)
         self.canvasFace.grid(row = 0,column = 0, columnspan = 2)
@@ -1176,10 +1224,15 @@ class SkillComposer:
         
         btnsEff = Frame(face)
         btnsEff.grid(row = 1,column = 0)
+        if self.OSname == 'win32':
+            wValue = 5
+        else:
+            wValue = 3
         for e in range(len(effectDictionary)):
-            Button(btnsEff,text=txt(list(effectDictionary.keys())[e]),width = 3,command = lambda eff=list(effectDictionary.values())[e]:self.changeEffect(eff)).grid(row = 0,column = e)
-        Button(btnsEff,text=txt('Meow'),width = 3,command = lambda :send(ports, ['u', 0])).grid(row = 0,column = 3)
-
+            Button(btnsEff,text=txt(list(effectDictionary.keys())[e]),width = wValue,command = lambda eff=list(effectDictionary.values())[e]:self.changeEffect(eff)).grid(row = 0,column = e)
+        Button(btnsEff,text=txt('Meow'),width = wValue,command = lambda :send(ports, ['u', 0])).grid(row = 0,column = 3)
+        self.topEye.focus_force()  # the eye color edit window gets focus
+        self.topEye.mainloop()
 
     def playThread(self):
         self.playStop = False
@@ -1225,96 +1278,134 @@ class SkillComposer:
         self.frameController.update()
         send(ports, ['L', self.frameData[4:20], 0.05])
         
-    def popCreator(self,configuration):
-        self.creator = "Nature"
-        self.location = "Earth"
-        self.creatorWin = tk.Tk()
+    def popCreator(self):
+        self.creatorWin = Toplevel(self.window)
         self.creatorWin.title(txt("Creator Information"))
-        self.config = configuration
+        self.creatorWin.geometry('216x110+500+400')
+
+        fmCreInfo = ttk.Frame(self.creatorWin)    # relief=GROOVE to draw border
+        fmCreInfo.grid(ipadx=3, ipady=3, padx=3, pady=5, sticky=W + E)
 
         # creator label and entry
-        creator_label = tk.Label(self.creatorWin, text=txt("Creator"))
-        creator_label.pack()
-        self.creator_entry = tk.Entry(self.creatorWin)
-        self.creator_entry.pack()
+        creator_label = Label(fmCreInfo, text=txt('Creator'))
+        creator_label.grid(row=0, column=0, padx=2, pady=6, sticky=W)
+        self.creator_entry = Entry(fmCreInfo, textvariable=self.creator, font=('Arial', 10), foreground='blue', background='white')
+        self.creator_entry.grid(row=0, column=1,padx=2, pady=6, sticky=W)
 
         # location label and entry
-        location_label = tk.Label(self.creatorWin, text=txt("Location"))
-        location_label.pack()
-        self.location_entry = tk.Entry(self.creatorWin)
-        self.location_entry.pack()
+        location_label = Label(fmCreInfo, text=txt('Location'))
+        location_label.grid(row=1, column=0, padx=2, pady=3, sticky=W)
+        self.location_entry = Entry(fmCreInfo, textvariable=self.location, font=('Arial', 10), foreground='blue', background='white')
+        self.location_entry.grid(row=1, column=1, padx=2, pady=3, sticky=W)
+
+        fmCreInfo.columnconfigure(0, weight=1)  # set column width
+        fmCreInfo.columnconfigure(1, weight=3)  # set column width
 
         # saveID button
-        saveID_button = tk.Button(self.creatorWin, text=txt("Save"), command=self.saveID)
-        saveID_button.pack()
-        self.creatorWin.geometry('250x150+500+400')
-        self.creatorInfoAcquired = False
+        saveID_button = Button(fmCreInfo, text=txt('Save'), command=self.saveID)
+        saveID_button.grid(row=2, columnspan=2, padx=3, pady=6, sticky=W + E)
+
+        self.creatorWin.protocol('WM_DELETE_WINDOW', self.saveID)
         
     def saveID(self):
         creatorValue = self.creator_entry.get()
         locationValue = self.location_entry.get()
-        if creatorValue != '':
-            self.creator = creatorValue
-        if locationValue != '':
-            self.location = locationValue
-        print("Creator:", self.creator)
-        print("Location:", self.location)
-        
-        self.config = self.config + [self.creator, self.location]
-        self.saveConfigToFile(defaultConfPath, self.config)
+        if creatorValue == '':
+            messagebox.showwarning(txt('Warning'), txt('InputCreator'))
+            self.creatorWin.after(1, lambda: self.creatorWin.focus_force())
+            self.creator_entry.focus()  # force the entry to get focus
+            return False
+        else:
+            self.creator.set(creatorValue)
+
+        if locationValue == '':
+            messagebox.showwarning(txt('Warning'), txt('InputLocation'))
+            self.creatorWin.after(1, lambda: self.creatorWin.focus_force())
+            self.location_entry.focus()  # force the entry to get focus
+            return False
+        else:
+            self.location.set(locationValue)
+
+        print("Creator:", self.creator.get())
+        print("Location:", self.location.get())
+
+        self.configuration = self.configuration[:6] + [self.creator.get(), self.location.get()]
+
+        self.saveConfigToFile(defaultConfPath)
         self.creatorInfoAcquired = True
+        logger.debug(f"saveID, self.creatorInfoAcquired: {self.creatorInfoAcquired}")
         self.creatorWin.destroy()
+
         
-    def saveConfigToFile(self, filename, config):
-        f = open(filename, 'w+')
-        lines = '\n'.join(config) + '\n'
+    def saveConfigToFile(self, filename):
+        self.configuration = [self.defaultLan, self.model, self.defaultPath, self.defaultSwVer, self.defaultBdVer,
+                                  self.defaultMode, self.configuration[6], self.configuration[7]]
+
+        f = open(filename, 'w+', encoding="utf-8")
+        logger.debug(f"config: {self.configuration}")
+        lines = '\n'.join(self.configuration) + '\n'
         f.writelines(lines)
         time.sleep(0.1)
         f.close()
 
     def getCreatorInfo(self, modifyQ):
-        self.creatorInfoAcquired = True
+        # self.creatorInfoAcquired = True
         try:
-            with open(defaultConfPath, "r") as f:
+            with open(defaultConfPath, "r", encoding="utf-8") as f:
                 lines = f.readlines()
-                f.close()
-                lines = [line[:-1] for line in lines]  # remove the '\n' at the end of each line
-                defaultLan = lines[0]
-                defaultModel = lines[1]
-                defaultPath = lines[2]
-                defaultSwVer = lines[3]
-                defaultBdVer = lines[4]
-                defaultMode = lines[5]
-                if len(lines)>=8 and not modifyQ:
-                    self.creator = lines[6]
-                    self.location = lines[7]
-                else:
-                    configuration = [defaultLan, defaultModel, defaultPath, defaultSwVer, defaultBdVer, defaultMode]
-                    self.popCreator(configuration)
+                # f.close()
+            lines = [line.split('\n')[0] for line in lines]    # remove the '\n' at the end of each line
+            defaultLan = self.defaultLan
+            defaultModel = self.model
+            defaultPath = lines[2]
+            defaultSwVer = lines[3]
+            defaultBdVer = lines[4]
+            defaultMode = lines[5]
+
+            if len(lines) >= 8:
+                self.creator.set(lines[6])
+                self.location.set(lines[7])
+                self.creatorInfoAcquired = True
+                self.configuration = [defaultLan, defaultModel, defaultPath, defaultSwVer, defaultBdVer, defaultMode,
+                                      lines[6], lines[7]]
+                logger.debug(f"getCreatorInfo, self.creatorInfoAcquired: {self.creatorInfoAcquired}")
+                if modifyQ is True:
+                    self.popCreator()
+            else:
+                self.creator.set(self.defaultCreator)
+                self.location.set(self.defaultLocation)
+                self.creatorInfoAcquired = False
+                self.configuration = [defaultLan, defaultModel, defaultPath, defaultSwVer, defaultBdVer, defaultMode,
+                                      self.defaultCreator, self.defaultLocation]
+                self.popCreator()
                 
         except Exception as e:
             print(e)
             print('Create configuration file')
-            defaultLan = 'English'
-            defaultModel = "Bittle"
-            defaultPath = releasePath
+            defaultLan = self.defaultLan
+            defaultModel = self.model
+            defaultPath = releasePath[:-1]
             defaultSwVer = '2.0'
             defaultBdVer = NyBoard_version
             defaultMode = 'Standard'
-            configuration = [defaultLan, defaultModel, defaultPath, defaultSwVer, defaultBdVer, defaultMode]
-            self.popCreator(configuration)
+            self.configuration = [defaultLan, defaultModel, defaultPath, defaultSwVer, defaultBdVer, defaultMode,
+                                  self.defaultCreator, self.defaultLocation]
+            self.creatorInfoAcquired = False
+            self.popCreator()
         
     def export(self):
         self.getCreatorInfo(False)
+        logger.debug(f"export, self.creatorInfoAcquired: {self.creatorInfoAcquired}")
         if not self.creatorInfoAcquired:
-            return # to avoid a bug that the creator window won't open until the file saver is cloesd
-        print("Creator:", self.creator)
-        print("Location:", self.location)
+            return  # to avoid a bug that the creator window won't open until the file saver is cloesd
+
+        logger.info(f"Creator: {self.creator.get()}")
+        logger.info(f"Location: {self.location.get()}")
         files = [('Text Document', '*.md'),
                  ('Python Files', '*.py'),
                  ('All Files', '*.*'),
                  ]
-        file = asksaveasfile(filetypes=files, defaultextension=files)
+        file = asksaveasfile(filetypes=files, defaultextension='.md')
 
         if self.activeFrame + 1 == self.totalFrame:
             self.getWidget(self.activeFrame, cSet).config(text='=',  # +txt('Set')
@@ -1388,36 +1479,54 @@ class SkillComposer:
         for row in skillData:
             print(('{:>4},' * frameSize).format(*row))
         print('};')
-        
-        x = datetime.datetime.now()
-        fileData = '# ' + file.name.split('/')[-1].split('.')[0] + '\n'
-        fileData += 'Note: '+'You may add a short description/instruction here.\n\n'
-        fileData += 'Model: ' + self.model + '\n\n'
-        fileData += 'Creator: ' + self.creator + '\n\n'
-        fileData += 'Location: ' + self.location + '\n\n'
-        fileData += 'Date: ' + x.strftime("%b")+' '+x.strftime("%d")+', '+x.strftime("%Y") + '\n\n'
-        fileData += '# [Demo](www.youtube.com) You can modify the link in the round brackets\n\n'
-        fileData += '# Token\nK\n\n'
-        fileData += '# Data\n{\n' + '{:>4},{:>4},{:>4},{:>4},\n'.format(*[period, 0, 0, angleRatio])
-        if period < 0 and self.gaitOrBehavior.get() == txt('Behavior'):
-            fileData += '{:>4},{:>4},{:>4},\n'.format(*[loopStructure[0], loopStructure[-1], self.loopRepeat.get()])
-        for row in skillData:
-            fileData += ('{:>4},' * frameSize).format(*row)
-            fileData += '\n'
-        fileData += '};'
+
+        if file:
+#            print(file.name)
+            x = datetime.datetime.now()
+            fileData = '# ' + file.name.split('/')[-1].split('.')[0] + '\n'
+            fileData += 'Note: '+'You may add a short description/instruction here.\n\n'
+            fileData += 'Model: ' + self.model + '\n\n'
+            fileData += 'Creator: ' + self.creator.get() + '\n\n'
+            fileData += 'Location: ' + self.location.get() + '\n\n'
+            fileData += 'Date: ' + x.strftime("%b")+' '+x.strftime("%d")+', '+x.strftime("%Y") + '\n\n'
+            fileData += '# [Demo](www.youtube.com) You can modify the link in the round brackets\n\n'
+            fileData += '# Token\nK\n\n'
+            fileData += '# Data\n{\n' + '{:>4},{:>4},{:>4},{:>4},\n'.format(*[period, 0, 0, angleRatio])
+            if period < 0 and self.gaitOrBehavior.get() == txt('Behavior'):
+                fileData += '{:>4},{:>4},{:>4},\n'.format(*[loopStructure[0], loopStructure[-1], self.loopRepeat.get()])
+            logger.debug(f"skillData: {skillData}")
+            for row in skillData:
+                logger.debug(f"row: {row}")
+                logger.debug(f"frameSize: {frameSize}")
+                fileData += ('{:>4},' * frameSize).format(*row)
+                fileData += '\n'
+            fileData += '};'
+
+            # the file in the config directory will be saved automatically
+            filePathName = configDir + separation + 'SkillLibrary' + separation + self.model + separation + file.name.split('/')[-1]
+            logger.debug(f"fileName is: {filePathName}")
+
+            filePathList = [file.name, filePathName]
+            for filePath in filePathList:
+                if filePath == filePathName:
+                    modelDir = configDir + separation + 'SkillLibrary' + separation + self.model
+                    makeDirectory(modelDir)
+                try:
+                    with open(filePath, 'w+', encoding="utf-8") as f:
+                        f.write(fileData)
+                        time.sleep(0.1)
+                    logger.info(f"save successfully: {filePath}")
+                except Exception as e:
+                    logger.info(f"save failed:{e}")
+                    return False
 
         if self.gaitOrBehavior.get() == txt('Behavior'):
             skillData.insert(0, [loopStructure[0], loopStructure[-1], int(self.loopRepeat.get())])
         skillData.insert(0, [period, 0, 0, angleRatio])
         flat_list = [item for sublist in skillData for item in sublist]
         print(flat_list)
-        if file:
-            print(file.name)
-            with open(file.name, 'w+') as f:
-                f.write(fileData)
-                time.sleep(0.1)
-                f.close()
-        send(ports, ['i',0.1])
+
+        send(ports, ['i', 0.1])
         res = send(ports, ['K', flat_list, 0], 0)
         print(res)
 
@@ -1727,6 +1836,7 @@ class SkillComposer:
 
     def on_closing(self):
         if messagebox.askokcancel(txt('Quit'), txt('Do you want to quit?')):
+            self.saveConfigToFile(defaultConfPath)
             self.keepChecking = False  # close the background thread for checking serial port
             self.window.destroy()
             closeAllSerial(goodPorts)

@@ -61,14 +61,24 @@
 // #define VOICE  //Petoi Grove voice module
 // #define VOICE_LD3320    //for LD3320 module
 // #define PIR             //for PIR (Passive Infrared) sensor
-// #define DOUBLE_TOUCH  //for double touch sensor
-// #define DOUBLE_LIGHT  //for double light sensor
+//#define DOUBLE_TOUCH  //for double touch sensor
+//#define DOUBLE_LIGHT  //for double light sensor
 // #define DOUBLE_INFRARED_DISTANCE  //for double infrared distance sensor
 // #define GESTURE  //for Gesture module
 // #define CAMERA  //for human body tracking or ball tracking using an intelligent camera
+// You need to install https://github.com/mu-opensource/MuVisionSensor3 as a zip library in Arduino IDE.
+// Set the four dial switches on the camera as **v ^ v v** (the second switch dialed up to I2C) and connect the camera module to the I2C grove on NyBoard.
+// The battery should be turned on to drive the servos.
+//
+// You can use these 3D printed structures to attach the camera module.
+// https://github.com/PetoiCamp/NonCodeFiles/blob/master/stl/MuIntelligentCamera_mount.stl
+// https://github.com/PetoiCamp/NonCodeFiles/blob/master/stl/bone.stl
+// After uploading the code, you may need to press the reset buttons on the module and then the NyBoard.
+// The tracking demo works the best with a yellow tennis ball or some other round objects. Demo: https://www.youtube.com/watch?v=CxGI-MzCGWM
 // #define GROVE_SERIAL_PASS_THROUGH  //allow analog/digital read/write GPIO pins through serial protocol
 // #define OTHER_MODULES  //uncomment this line to disable the gyroscope code to save programming resources for other modules.
 
+#define IR_PIN 4  // Signal Pin of IR receiver to Arduino Digital Pin 4
 #include "src/OpenCat.h"
 
 void setup() {
@@ -89,10 +99,6 @@ void setup() {
 
 void loop() {
 #ifdef MAIN_SKETCH
-#ifdef VOLTAGE_DETECTION_PIN
-  lowBattery();  //  block the loop if battery is low
-  //  can be disabled to save programming space and reduce the low voltage interruptions
-#endif
 #ifdef GYRO_PIN
   readEnvironment();     //reads the IMU (Inertia Measurement Unit, i.e. acceleration and angles).
                          //May read more sensors in the future
@@ -112,6 +118,10 @@ void loop() {
 #endif
   }
   reaction();  //handle different commands
+#ifdef VOLTAGE_DETECTION_PIN
+  lowBattery();  //  block the loop if battery is low
+  //  can be disabled to save programming space and reduce the low voltage interruptions
+#endif
 #else
   calibratePCA9685();
 #endif

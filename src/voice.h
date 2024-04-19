@@ -1,4 +1,5 @@
 // Petoi Voice Command Module
+// Doc: https://docs.petoi.com/extensible-modules/voice-command-module
 // use the software serial port on the NyBoard to read the module. connect the module to the grove socket with pin 8 and 9.
 // or use the serial 2 port on the BiBoard to read the module. connect the module to the pin Tx2 and Rx2.
 // if you wire the module up with the USB programmer directly, connect the module's Tx to the programmer's Rx, and Rx to Tx.
@@ -26,11 +27,11 @@ SoftwareSerial Serial2(8, 9);  //Rx, Tx
 // 下列行为是程序中预设的，您可以用技能创作坊设计新技能并导入到 InstinctX.h
 // 支持其他的串口指令，比如活动关节和旋律
 
-const char voice1[] PROGMEM = "T";                                    //call the last skill data sent by the Skill Composer
+const char voice1[] PROGMEM = "T";  //call the last skill data sent by the Skill Composer ## Will cause bug when skill is longer than 5 frames
 #ifdef BITTLE
-const char voice2[] PROGMEM = "kpu1";                                 //单手俯卧撑	 single-handed pushups
+const char voice2[] PROGMEM = "kpu1";  //单手俯卧撑	 single-handed pushups
 #elif defined NYBBLE
-const char voice2[] PROGMEM = "kwsf";                                 //洗脸	  wash face
+const char voice2[] PROGMEM = "kwsf";  //洗脸	  wash face
 #endif
 const char voice3[] PROGMEM = "m0 80 0 -80";                          //动头 move head
 const char voice4[] PROGMEM = "kmw";                                  //moonwalk
@@ -52,8 +53,8 @@ const char *const voiceTable[] PROGMEM = {
   voice9,
   voice10,
 };
-
 int listLength = 0;
+bool enableVoiceQ = true;
 
 void voiceSetup() {
   PTLF("Init voice");
@@ -64,34 +65,44 @@ void voiceSetup() {
   PTL(listLength);
 }
 
+void set_voice() {  // send some control command directly to the module
+                    // XAa: switch English
+                    // XAb: switch Chinese
+                    // XAc: turn on the sound response
+                    // XAd: turn off the sound response
+                    // XAe: start learning
+                    // XAf: stop learning
+                    // XAg: clear the learning data
+  byte c = 0;
+  while (newCmd[c++] != '~')
+    ;
+  newCmd[c - 1] = '\0';
+  // Serial.print('X');
+  // Serial.println(newCmd);
+  Serial2.print('X');
+  Serial2.println(newCmd);
+  while (Serial2.available() && Serial2.read())
+    ;
+  if (!strcmp(newCmd, "Ac"))  // enter "XAc" in the serial monitor or add button "X65,99" in the mobile app to enable voice reactions
+                              // 在串口监视器输入指令“XAc”或在手机app创建按键"X65,99"来激活语音动作
+    enableVoiceQ = true;
+  else if (!strcmp(newCmd, "Ad"))  // enter "XAd" in the serial monitor or add button "X65,100" in the mobile app to disable voice reactions
+                                   // 在串口监视器输入指令“XAd”或在手机app创建按键"X65,100"来禁用语音动作
+    enableVoiceQ = false;
+  PTL(token);
+  resetCmd();
+}
 void read_voice() {
-  if (token == 'X' && newCmd[0] == 'A') {  // send some control command directly to the module
-                                           // XAa: switch English
-                                           // XAb: switch Chinese
-                                           // XAc: turn on the sound response
-                                           // XAd: turn off the sound response
-                                           // XAe: start learning
-                                           // XAf: stop learning
-                                           // XAg: clear the learning data
-    byte c = 0;
-    while (newCmd[c++] != '~')
-      ;
-    newCmd[c - 1] = '\0';
-    // Serial.print('X');
-    // Serial.println(newCmd);
-    Serial2.print('X');
-    Serial2.println(newCmd);
-    while (Serial2.available() && Serial2.read())
-      ;
-    resetCmd();
-  }
-
   if (Serial2.available()) {
     String raw = Serial2.readStringUntil('\n');
     // PTL(raw);
     byte index = (byte)raw[2];  //interpret the 3rd byte as integer
     int shift = -1;
-    if (index > 10) {
+    if (index == 67)  //say "play sound" to enable voice reactions / 说“打开音效”激活语音动作
+      enableVoiceQ = true;
+    else if (index == 68)  //say "be quiet" to disable voice reactions / 说“安静点”禁用语音动作
+      enableVoiceQ = false;
+    else if (index > 10) {
       if (index < 21) {  //11 ~ 20 are customized commands, and their indexes should be shifted by 11
         index -= 11;
         PT(index);
@@ -109,11 +120,13 @@ void read_voice() {
         token = raw[3];         //T_SKILL;
         shift = 4;              //3;
       }
-      const char *cmd = raw.c_str() + shift;
-      tQueue->addTask(token, shift > 0 ? cmd : "", 2000);
-      char end = cmd[strlen(cmd) - 1];
-      if (!strcmp(cmd, "bk") || !strcmp(cmd, "x") || end >= 'A' && end <= 'Z' || end == 'x') {
-        tQueue->addTask('k', "up");
+      if (enableVoiceQ) {
+        const char *cmd = raw.c_str() + shift;
+        tQueue->addTask(token, shift > 0 ? cmd : "", 2000);
+        char end = cmd[strlen(cmd) - 1];
+        if (!strcmp(cmd, "bk") || !strcmp(cmd, "x") || end >= 'A' && end <= 'Z' || end == 'x') {
+          tQueue->addTask('k', "up");
+        }
       }
     }
   }

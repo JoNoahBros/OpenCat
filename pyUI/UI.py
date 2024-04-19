@@ -9,7 +9,7 @@
 from FirmwareUploader import *
 from SkillComposer import *
 from Calibrator import *
-from commonVar import *
+from tkinter import PhotoImage
 
 language = languageList['English']
 apps = ['Firmware Uploader', 'Joint Calibrator', 'Skill Composer']  # ,'Task Scheduler']
@@ -24,26 +24,42 @@ class UI:
         global model
         global language
         try:
-            with open(defaultConfPath, "r") as f:
+            with open(defaultConfPath, "r", encoding="utf-8") as f:
                 lines = f.readlines()
-                lines = [line[:-1] for line in lines]  # remove the '\n' at the end of each line
-                self.defaultLan = lines[0]
-                model = lines[1]
-                self.defaultPath = lines[2]
-                self.defaultSwVer = lines[3]
+                # f.close()
+            lines = [line.split('\n')[0] for line in lines]  # remove the '\n' at the end of each line
+            num = len(lines)
+            logger.debug(f"len(lines): {num}")
+            self.defaultLan = lines[0]
+            model = lines[1]
+            self.defaultPath = lines[2]
+            self.defaultSwVer = lines[3]
+            if lines[4] == "BiBoard_V0":
+                self.defaultBdVer = "BiBoard_V0_1"
+            else:
                 self.defaultBdVer = lines[4]
-                self.defaultMode = lines[5]
-                f.close()
+            self.defaultMode = lines[5]
+            if len(lines) >= 8:
+                self.defaultCreator = lines[6]
+                self.defaultLocation = lines[7]
+                self.configuration = [self.defaultLan, model, self.defaultPath, self.defaultSwVer, self.defaultBdVer,
+                                      self.defaultMode, self.defaultCreator, self.defaultLocation]
+            else:
+                self.configuration = [self.defaultLan, model, self.defaultPath, self.defaultSwVer, self.defaultBdVer,
+                                      self.defaultMode]
+
 
         except Exception as e:
             print('Create configuration file')
             self.defaultLan = 'English'
             model = 'Bittle'
-            self.defaultPath = releasePath
+            self.defaultPath = releasePath[:-1]
             self.defaultSwVer = '2.0'
             self.defaultBdVer = NyBoard_version
             self.defaultMode = 'Standard'
-        #            raise e
+            self.configuration = [self.defaultLan, model, self.defaultPath, self.defaultSwVer, self.defaultBdVer,
+                                  self.defaultMode]
+            # raise e
 
         language = languageList[self.defaultLan]
 
@@ -52,17 +68,21 @@ class UI:
 
         self.OSname = self.window.call('tk', 'windowingsystem')
         if self.OSname == 'win32':
-            self.window.iconbitmap(r'./resources/Petoi.ico')
-            self.window.geometry('350x270+800+400')
-        else:
+            self.window.iconbitmap(resourcePath + 'Petoi.ico')
+            self.window.geometry('398x270+800+400')
+        elif self.OSname == 'aqua':
             self.window.geometry('+800+400')
             self.backgroundColor = 'gray'
+        else:
+            self.window.tk.call('wm', 'iconphoto', self.window._w, "-default",
+                                PhotoImage(file= resourcePath + 'Petoi.png'))
+            self.window.geometry('+800+400')
 
         self.myFont = tkFont.Font(
             family='Times New Roman', size=20, weight='bold')
         self.window.title(txt('uiTitle'))
         self.createMenu()
-        bw = 20
+        bw = 23
         self.modelLabel = Label(self.window, text=model, font=self.myFont)
         self.modelLabel.grid(row=0, column=0, pady=10)
         for i in range(len(apps)):
@@ -100,6 +120,8 @@ class UI:
         model = copy.deepcopy(modelName)
         self.modelLabel.configure(text=model)
         print(model)
+        if model == "Bittle X":
+            self.defaultBdVer = "BiBoard_V0_2"
 
     def changeLan(self, l):
         global language
@@ -113,27 +135,54 @@ class UI:
             for i in range(len(apps)):
                 self.window.winfo_children()[1 + i].config(text=txt(apps[i]))
 
-    def saveConfigToFile(self, filename, config):
-        print(config)
-        f = open(filename, 'w+')
-        lines = '\n'.join(config) + '\n'
+    def saveConfigToFile(self, filename):
+        if len(self.configuration) == 6:
+            self.configuration = [self.defaultLan, model, self.defaultPath, self.defaultSwVer, self.defaultBdVer,
+                         self.defaultMode]
+        else:
+            self.configuration = [self.defaultLan, model, self.defaultPath, self.defaultSwVer, self.defaultBdVer,
+                                  self.defaultMode, self.defaultCreator, self.defaultLocation]
+        config.strLan = self.defaultLan
+        logger.debug(f"save the language as: {config.strLan}.")
+        f = open(filename, 'w+', encoding="utf-8")
+        lines = '\n'.join(self.configuration) + '\n'
         f.writelines(lines)
         f.close()
 
     def utility(self, app):
-        configuration = [self.defaultLan, model, self.defaultPath, self.defaultSwVer, self.defaultBdVer,
-                         self.defaultMode]
-        self.saveConfigToFile(defaultConfPath, configuration)
+        self.saveConfigToFile(defaultConfPath)
+        logger.info(f"{self.configuration}")
         self.window.destroy()
 
         if app == 'Firmware Uploader':
             Uploader(model, language)
         elif app == 'Joint Calibrator':
+            self.showBootPrompt("cali")
             Calibrator(model, language)
         elif app == 'Skill Composer':
+            self.showBootPrompt("skil")
             SkillComposer(model, language)
         elif app == 'Task Scheduler':
             print('schedule')
+
+    def showBootPrompt(self, prom="cali"):
+        window = tk.Tk()
+        window.geometry('+800+500')
+
+        def on_closing():
+            window.destroy()
+
+        window.protocol('WM_DELETE_WINDOW', on_closing)
+        window.title(txt('Boot prompt'))
+
+        labelC = tk.Label(window, font='sans 14 bold', justify='left')
+        labelC['text'] = txt('poweron')
+        labelC.grid(row=0, column=0)
+        buttonC = tk.Button(window, text=txt('Confirm'), command=on_closing)
+        buttonC.grid(row=1, column=0, pady=10)
+
+        window.focus_force()  # new window gets focus
+        window.mainloop()
 
     def showAbout(self):
         messagebox.showinfo('Petoi Desktop App',
@@ -141,9 +190,8 @@ class UI:
 
     def on_closing(self):
         if messagebox.askokcancel(txt('Quit'), txt('Do you want to quit?')):
-            configuration = [self.defaultLan, model, self.defaultPath, self.defaultSwVer, self.defaultBdVer,
-                             self.defaultMode]
-            self.saveConfigToFile(defaultConfPath, configuration)
+            self.saveConfigToFile(defaultConfPath)
+            logger.info(f"{self.configuration}")
             self.window.destroy()
 
 

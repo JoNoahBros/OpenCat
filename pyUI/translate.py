@@ -1,5 +1,5 @@
-versionNum = '1.1.0'
-dateStr = '2023-06-20'
+versionNum = '1.1.9'
+dateStr = '2024-03-01'
 
 textEN = {
     'lan':'English',
@@ -19,6 +19,10 @@ textEN = {
     'Creator Information':'Creator Information',
     'Creator':'Creator',
     'Location':'Location',
+    'Nature':'Nature',
+    'Earth':'Earth',
+    'InputCreator':'Please input the nickname of the creator',
+    'InputLocation':'Please input the location of the creator',
     'Exit':'Exit',
     'Help':'Help',
     'About':'About',
@@ -98,7 +102,7 @@ textEN = {
     'Replug mode':'Replug mode',
     'Replug prompt':'''WARNING: Connection Failed!\n\n
 * If the main board is NOT connected to the computer:\n
-Click the button below. Connect the USB cable to the main board, then plug the other end to the COMPUTER.\n\n
+Click the button below. Connect the USB cable to the main board, then plug the other end to the COMPUTER. \n\n
 * If the main board is already connected to the computer via a USB cable:\n
 1. Confirm your computer can recognize the USB device.\n
 More details can be found at https://docs.petoi.com/upload-firmware\n
@@ -138,6 +142,7 @@ More details can be found at https://docs.petoi.com/upload-firmware\n
     'rbnCamera': 'Camera',
     'Parameters':'Parameters',
     'Main function':'Main function',
+    'Time consuming': 'it will take about 30 seconds',
     'btnFacReset':'Factory Reset',
     'tipFacReset':''' After factory reset, you need to do joint calibration, please refer to: 
  https://docs.petoi.com/joint-calibration ''',
@@ -158,12 +163,13 @@ More details can be found at https://docs.petoi.com/upload-firmware\n
 
     'msgNoneAvrdude': '''There is no avrdude. Please install avrdude at first! For details, please refer to :
     https://docs.petoi.com/desktop-app/firmware-uploader#install-avrdude-in-the-linux-os''',
+    'msgNoneEsptool':'There is no esptool. Please install esptool at first!',
 
     'titleVersion': 'Version information',
 
     'msgVersion': 'Version: ' + versionNum + '\n'+
     '''Firmware upload tool for OpenCat
-    Copyright © 2018-2023
+    Copyright © 2018-2024
     All rights reserved Petoi LLC
     https://www.petoi.com\n''' + dateStr,
 
@@ -228,6 +234,8 @@ More details can be found at https://docs.petoi.com/upload-firmware\n
     
     'tipImgWiring':'Pay attention to the location and direction of the servo plugs\nLong-press the battery\'s button to turn on the power\nClick \"Calibrate\" to rotate all the servos to the calibration state\nAttach the legs and head perpendicularly\nUse the slider to align the edges of the legs and the reference ruler parallelly',
     'tipImgPosture':'Switch between postures to test the calibration results\nSave the offsets in time\nNo need for calibration in the future',
+    'Boot prompt': 'Boot prompt',
+    'poweron':'The robot must be powered by a battery to rotate its joints, \n\nIt\'s VITAL for controlling joint movement!\n\nThe yellow LED on the mainboard should light up, \n\notherwise, plug in the battery and long-press its \n\nbutton for 3 seconds to power on the robot.\n\n',
 }
 textCN = {
     'lan':'Simplified Chinese',
@@ -247,6 +255,10 @@ textCN = {
     'Creator Information':'创作者信息',
     'Creator':'创作者',
     'Location':'位置',
+    'Nature':'自然',
+    'Earth':'地球',
+    'InputCreator':'请输入创作者昵称',
+    'InputLocation':'请输入创作者位置',
     'Exit':'退出',
     'Help':'帮助',
     'About':'关于',
@@ -329,12 +341,12 @@ textCN = {
 
     'Manual mode':'手动模式',
     'Replug mode':'重新拔插',
-    'Replug prompt':'''警告：上传失败！\n\n
+    'Replug prompt':'''警告：连接失败！\n\n
 * 如果主板未连接到计算机：\n
 点击下面的按钮，将USB数据线连接到主板，然后将另一端插入电脑。\n\n
 * 如果主板已经通过USB数据线连接到计算机：\n
 1. 确认您的计算机可以识别 USB 设备。\n
-   更多详情请参考 https://docs.petoi.com/upload-firmware\n
+   更多详情请参考 https://docs.petoi.com/upload-firmware \n
 2. 点击下面的按钮后，从电脑端拔下USB数据线，然后再插回去。
 ''',
     'Confirm':'确认',
@@ -370,6 +382,7 @@ textCN = {
 
     'msgNoneAvrdude': '''没有找到可执行程序文件 avrdude。请先安装 avrdude！详细说明请参考：
     https://docs.petoi.com/v/chinese/zhuo-mian-ying-yong/gu-jian-shang-zai#linux-xi-tong-zhong-an-zhuang-avrdude''',
+    'msgNoneEsptool':'没有找到可执行程序文件 esptool。 请先安装esptool！',
 
     'Uploading': '上传',
     'is successully uploaded':' 上传成功！',
@@ -378,7 +391,7 @@ textCN = {
 
     'msgVersion': '版本：' + versionNum + '\n'+
     '''OpenCat固件上传工具
-    版权所有 © 2018-2023
+    版权所有 © 2018-2024
     派拓艺（深圳）科技有限责任公司
     https://www.petoi.com\n''' + dateStr,
 
@@ -410,6 +423,7 @@ textCN = {
     'RandomMind_Ultrasonic':'随机_超声波',
     'Parameters':'参数',
     'Main function':'主程序',
+    'Time consuming': '大约需要30秒',
     'btnFacReset':'恢复出厂设置',
     'tipFacReset':''' 恢复出厂设置后，你需要重新校准关节舵机，请参考：
  https://docs.petoi.com/joint-calibration ''',
@@ -452,6 +466,8 @@ textCN = {
     'tipDel':'删除当前帧',
     'tipImgWiring':'接舵机线时注意插头的位置和正反\n长按电池按钮通电\n点击“校准“使所有舵机旋转到校准位\n按垂直关系安装四肢和头\n控制滑条使大小腿边缘与校准尺平行',
     'tipImgPosture':'在各姿势间切换，检查校准效果\n及时保存修正值\n后续使用无需再校准',
+    'Boot prompt': '开机提醒',
+    'poweron':'机器人必须由电池供电才能旋转它的关节，\n\n这对于控制关节运动至关重要！\n\n主板上的黄色 LED 应亮起, \n\n否则，请插入电池，并长按电池上的按钮 \n\n3秒给机器人开机。\n\n',
 }
 
 textCN_TW = {
@@ -472,6 +488,10 @@ textCN_TW = {
     'Creator Information':'創作者信息',
     'Creator':'創作者',
     'Location':'位置',
+    'Nature': '自然',
+    'Earth': '地球',
+    'InputCreator': '請輸入創作者昵稱',
+    'InputLocation': '請輸入創作者位置',
     'Exit':'退出',
     'Help':'幫助',
     'About':'關於',
@@ -554,12 +574,12 @@ textCN_TW = {
 
     'Manual mode':'手動模式',
     'Replug mode':'重新拔插',
-    'Replug prompt':'''警告：上傳失敗！\n\n
+    'Replug prompt':'''警告：連線失敗！\n\n
 * 如果主機板未連接到電腦：\n
 點擊下面的按鈕後，將USB資料線連接到主機板，然後將另一端插入電腦。\n\n
 * 如果主機板已經通過USB資料線連接到電腦：\n
 1. 確認您的電腦可以識別 USB 設備。\n
-   更多詳情請參考 https://docs.petoi.com/upload-firmware\n
+   更多詳情請參考 https://docs.petoi.com/upload-firmware \n
 2. 點擊下面的按鈕後，從電腦端拔下USB資料線，然後再插回去。
 ''',
     'Confirm':'確認',
@@ -575,7 +595,6 @@ textCN_TW = {
     'uploaderTitle': '上傳者標題',
     'labTrans': '切換語言',
     'title': '標題',
-    'labTrans': '切換語言',
     'labChi': '中文',
     'labEng': '英文',
     'labHelp': '幫助',
@@ -595,6 +614,7 @@ textCN_TW = {
 
     'msgNoneAvrdude': '''沒有找到可執行程式文件 avrdude。請先安裝 avrdude！詳細說明請參考：
     https://docs.petoi.com/v/chinese/zhuo-mian-ying-yong/gu-jian-shang-zai#linux-xi-tong-zhong-an-zhuang-avrdude''',
+    'msgNoneEsptool':'沒有找到可執行程式文件 esptool。請先安裝 esptool！',
 
     'Uploading': '上傳',
     'is successully uploaded':' 上傳成功！',
@@ -603,7 +623,7 @@ textCN_TW = {
 
     'msgVersion': '版本：' + versionNum + '\n'+
     '''OpenCat固件上傳工具
-    版權所有 © 2018-2023
+    版權所有 © 2018-2024
     派拓藝（深圳）科技有限责任公司
     https://www.petoi.com\n''' + dateStr,
 
@@ -635,6 +655,7 @@ textCN_TW = {
     'RandomMind_Ultrasonic':'随機_超聲波',
     'Parameters':'參數',
     'Main function':'主程序',
+    'Time consuming': '大約需要30秒',
     'btnFacReset':'恢復出廠設置',
     'tipFacReset':''' 恢復出廠設置後，你需要重新校準關節舵機，請參考：
  https://docs.petoi.com/joint-calibration ''',
@@ -678,6 +699,8 @@ textCN_TW = {
     'tipDel':'刪除當前幀',
     'tipImgWiring':'接舵機線时注意插頭的位置和正反\n長按電池按鈕通電\n點擊“校準“使所有舵機旋轉到校準位\n按垂直關係安装四肢和頭\n控制滑條使大小腿邊緣與校準尺平行',
     'tipImgPosture':'在各姿勢間切换，檢查校準效果\n及時保存修正值\n後續使用無需再校準',
+    'Boot prompt': '開機提醒',
+    'poweron':'機器人必須由電池供電才能旋轉它的關節，\n\n這對於控制關節運動至關重要！\n\n主機板上的黃色 LED 應亮起。\n\n否則，請插入電池，並長按電池上的按鈕 \n\n3秒給機器人開機。\n\n',
 }
 
 
@@ -699,6 +722,10 @@ textDE = {
     'Creator Information':'Erstellerinformationen',
     'Creator':'Schöpfer',
     'Location':'Standort',
+    'Nature': 'Natur',
+    'Earth': 'Erde',
+    'InputCreator': 'Bitte geben Sie den Spitznamen des Erstellers ein',
+    'InputLocation': 'Bitte geben Sie den Standort des Erstellers ein',
     'Exit':'Beenden',
     'Help':'Hilfe',
     'About':'Über',
@@ -776,13 +803,13 @@ textDE = {
 
     'Manual mode':'Manueller Modus',
     'Replug mode':'Replug-Modus',
-    'Replug prompt':'''WARNUNG: Hochladen fehlgeschlagen!\n\n
+    'Replug prompt':'''WARNUNG: Verbindung fehlgeschlagen! \n\n
 * Wenn die Hauptplatine NICHT mit dem Computer verbunden ist:\n
-Klicken Sie auf die Schaltfläche unten. Verbinden Sie das USB-Kabel mit der Hauptplatine und stecken Sie dann das andere Ende in den COMPUTER.\n\n
+Klicken Sie auf die Schaltfläche unten. Verbinden Sie das USB-Kabel mit der Hauptplatine und stecken Sie dann das andere Ende in den COMPUTER. \n\n
 * Wenn die Hauptplatine bereits über ein USB-Kabel mit dem Computer verbunden ist:\n
 1. Vergewissern Sie sich, dass Ihr Computer das USB-Gerät erkennen kann.\n
 Weitere Einzelheiten finden Sie unter https://docs.petoi.com/upload-firmware.\n
-2. Nachdem Sie auf die Schaltfläche unten geklickt haben, ziehen Sie das USB-Kabel von der COMPUTER-Seite ab und stecken Sie es dann wieder ein.
+2. Nachdem Sie auf die Schaltfläche unten geklickt haben, ziehen Sie das USB-Kabel von der COMPUTER-Seite ab und stecken Sie es dann wieder ein. 
 ''',
     'Confirm':'Bestätigen',
     'Counting down to manual mode: ':'Countdown zum manuellen Modus: ',
@@ -818,6 +845,7 @@ Weitere Einzelheiten finden Sie unter https://docs.petoi.com/upload-firmware.\n
     'rbnCamera': 'Kamera',
     'Parameters':'Parameter',
     'Main function':'Hauptfunktion',
+    'Time consuming': 'es dauert etwa 30 Sekunden',
     'btnFacReset':'Werkseinstellungen zurückgesetzt',
     'tipFacReset':''' Nach dem Zurücksetzen auf die Werkseinstellungen müssen Sie eine gemeinsame Kalibrierung durchführen. 
  Weitere Informationen finden Sie unter: https://docs.petoi.com/joint-calibration ''',
@@ -838,12 +866,13 @@ Weitere Einzelheiten finden Sie unter https://docs.petoi.com/upload-firmware.\n
 
     'msgNoneAvrdude': '''Es gibt kein Avrdude. Bitte installieren Sie zuerst avrdude! Einzelheiten finden Sie unter :
     https://docs.petoi.com/desktop-app/firmware-uploader#install-avrdude-in-the-linux-os''',
+    'msgNoneEsptool':'Es gibt kein Esptool. Bitte installieren Sie zuerst esptool!',
 
     'titleVersion': 'Versionsinformation',
 
     'msgVersion': 'Version: ' + versionNum + '\n'+
     '''Firmware-Uploader für OpenCat
-    Copyright © 2018-2023
+    Copyright © 2018-2024
     Alle Rechte vorbehalten
     Petoi LLC
     https://www.petoi.com\n''' + dateStr,
@@ -909,6 +938,8 @@ Weitere Einzelheiten finden Sie unter https://docs.petoi.com/upload-firmware.\n
     'tipDel': 'Lösche den aktuellen Frame',
     'tipImgWiring': 'Achte auf den Standort und die Ausrichtung der Servostecker\nHalte die Taste des Akkus lange gedrückt, um die Stromversorgung einzuschalten\nKlicke auf "Kalibrieren", um alle Servos in den Kalibrierungsmodus zu drehen\nBefestige die Beine und den Kopf senkrecht\nVerwende den Schieberegler, um die Kanten der Beine und der Referenzskala parallel auszurichten',
     'tipImgPosture': 'Wechsle zwischen Haltungen, um die Kalibrierungsergebnisse zu testen\nSpeichere die Abweichungen rechtzeitig\nKeine Notwendigkeit für zukünftige Kalibrierung',
+    'Boot prompt': 'Boot-Eingabeaufforderung',
+    'poweron':'Der Roboter muss mit einer Batterie betrieben werden, um seine Gelenke zu drehen, \n\ndies ist für die Kontrolle der Gelenkbewegung von entscheidender Bedeutung!\n\nDie gelbe LED auf der Hauptplatine sollte aufleuchten, \n\nandernfalls stecken Sie den Akku ein und drücken Sie die \n\nTaste 3 Sekunden lang, um den Roboter einzuschalten.\n\n',
 }
 
 textTH = {
@@ -929,6 +960,10 @@ textTH = {
     'Creator Information':'ข้อมูลผู้สร้าง',
     'Creator':'ผู้สร้าง',
     'Location':'ที่ตั้ง',
+    'Nature': 'ธรรมชาติ',
+    'Earth': 'โลก',
+    'InputCreator': 'กรุณาใส่ชื่อเล่นของผู้สร้าง',
+    'InputLocation': 'โปรดป้อนตำแหน่งของผู้สร้าง',
     'Exit':'ออก',
     'Help':'วิธีใช้',
     'About':'เกี่ยวกับ',
@@ -1006,9 +1041,9 @@ textTH = {
 
     'Manual mode':'โหมดแมนนวล',
     'Replug mode':'โหมดเสียบปลั๊ก',
-    'Replug prompt':'''คำเตือน: การอัปโหลดล้มเหลว!\n\n
+    'Replug prompt':'''แจ้งเตือน: การเชื่อมต่อล้มเหลว! \n\n
 * ถ้าเมนบอร์ดไม่ได้เชื่อมต่อกับคอมพิวเตอร์:\n
-คลิกปุ่มด้านล่าง ต่อสาย USB เข้ากับเมนบอร์ด จากนั้นเสียบปลายอีกด้านเข้ากับคอมพิวเตอร์\n\n
+คลิกปุ่มด้านล่าง ต่อสาย USB เข้ากับเมนบอร์ด จากนั้นเสียบปลายอีกด้านเข้ากับคอมพิวเตอร์ \n\n
 * หากเมนบอร์ดเชื่อมต่อกับคอมพิวเตอร์ผ่านสาย USB อยู่แล้ว:\n
 1. ยืนยันว่าคอมพิวเตอร์ของคุณสามารถรู้จักอุปกรณ์ USB ได้\n
 ดูรายละเอียดเพิ่มเติมได้ที่ https://docs.petoi.com/upload-firmware.\n
@@ -1048,6 +1083,7 @@ textTH = {
     'rbnCamera': 'กล้อง',
     'Parameters':'พารามิเตอร์',
     'Main function':'ฟังก์ชั่นหลัก',
+    'Time consuming': 'จะใช้เวลาประมาณ 30 วินาที',
     'btnFacReset':'รีเซ็ตเป็นค่าเริ่มต้นจากโรงงาน',
     'tipFacReset':''' หลังจากการรีเซ็ตเป็นค่าเริ่มต้นจากโรงงาน คุณต้องทำการปรับเทียบร่วม โปรดดูที่: 
  https://docs.petoi.com/joint-calibration ''',
@@ -1068,12 +1104,13 @@ textTH = {
 
     'msgNoneAvrdude': '''ไม่มี avrdude โปรดติดตั้ง avrdude ในตอนแรก! สำหรับรายละเอียด โปรดดูที่:
     https://docs.petoi.com/desktop-app/firmware-uploader#install-avrdude-in-the-linux-os''',
+    'msgNoneEsptool':'ไม่มีที่วางมือ โปรดติดตั้ง esptool ในตอนแรก!',
 
     'titleVersion': 'ข้อมูลเวอร์ชัน',
 
     'msgVersion': 'เวอร์ชัน: ' + versionNum + '\n'+
     '''เครื่องมืออัพโหลดเฟิร์มแวร์สำหรับ OpenCat
-    ลิขสิทธิ์ ©  2018-2023
+    ลิขสิทธิ์ ©  2018-2024
     สงวนลิขสิทธิ์ทั้งหมด Petoi LLC
     https://www.petoi.com\n''' + dateStr,
 
@@ -1139,6 +1176,8 @@ textTH = {
 
     'tipImgWiring':'ระมัดระวังตำแหน่งและทิศทางของตัวเชื่อมต่อเซอร์โว\nกดปุ่มแบตเตอรี่นานเพื่อเปิดเครื่อง\nคลิก "ปรับสอบ" เพื่อหมุนเซอร์โวทั้งหมดให้อยู่ในสถานะการปรับสอบ\nติดตั้งขาและหัวให้ตั้งฉาก\nใช้ตัวเลื่อนเพื่อปรับขอบขาให้สอดคล้องกันและตัวชี้วัดอ้างอิง',
     'tipImgPosture':'สลับระหว่างท่าทางต่าง ๆ เพื่อทดสอบผลการปรับสอบ\nบันทึกค่าออฟเซ็ตในเวลาจริง\nไม่จำเป็นต้องปรับสอบในอนาคต',
+    'Boot prompt': 'พร้อมท์การบูต',
+    'poweron':'หุ่นยนต์ต้องอาศัยพลังงานจากแบตเตอรี่ในการหมุนข้อต่อของมัน, \n\nสิ่งนี้มีความสำคัญอย่างยิ่งสำหรับการควบคุมการเคลื่อนไหวของข้อต่อ! \n\nไฟ LED สีเหลืองของเมนบอร์ดควรสว่างขึ้น \n\nถ้าไม่เช่นนั้น ให้ใส่แบตเตอรี่และกดแบตเตอรี่ค้างไว้ \n\nเป็นเวลา 3 วินาทีเพื่อขับเคลื่อนหุ่นยนต์ \n\n',
 }
 
 textFR={
@@ -1159,6 +1198,10 @@ textFR={
     'Creator Information':'Informations sur le créateur',
     'Creator':'Créateur',
     'Location':'Emplacement',
+    'Nature': 'Nature',
+    'Earth': 'Terre',
+    'InputCreator': 'Veuillez saisir le pseudo du créateur',
+    'InputLocation': 'Veuillez saisir l\'emplacement du créateur',
     'Exit':'Quitter',
     'Help':'Aide',
     'About':'À propos',
@@ -1236,13 +1279,12 @@ textFR={
 
     'Manual mode':'Mode manuel',
     'Replug mode':'Mode Replug',
-    'Replug prompt':'''AVERTISSEMENT : Échec de la connexion !
-
-* Si la carte principale N'EST PAS connectée à l'ordinateur :
-Cliquez sur le bouton ci-dessous. Connectez le câble USB à la carte principale, puis branchez l'autre extrémité sur l'ORDINATEUR.
-* Si la carte principale est déjà connectée à l'ordinateur via un câble USB :
-1. Confirmez que votre ordinateur peut reconnaître le périphérique USB.
-Vous trouverez plus de détails à l'adresse https://docs.petoi.com/upload-firmware
+    'Replug prompt':'''ATTENTION : Echec de la connexion! \n\n
+* Si la carte principale N'EST PAS connectée à l'ordinateur :\n
+Cliquez sur le bouton ci-dessous. Connectez le câble USB à la carte principale, puis branchez l'autre extrémité sur l'ORDINATEUR. \n\n
+* Si la carte principale est déjà connectée à l'ordinateur via un câble USB :\n
+1. Confirmez que votre ordinateur peut reconnaître le périphérique USB.\n
+Vous trouverez plus de détails à l'adresse https://docs.petoi.com/upload-firmware. \n
 2. Après avoir cliqué sur le bouton ci-dessous, débranchez le câble USB du côté de l'ORDINATEUR, puis rebranchez-le.
 ''',
     'Confirm':'Confirmer',
@@ -1279,6 +1321,7 @@ Vous trouverez plus de détails à l'adresse https://docs.petoi.com/upload-firmw
     'rbnCamera': 'Caméra',
     'Parameters':'Paramètres',
     'Main function':'Fonction principale',
+    'Time consuming': 'cela prendra environ 30 secondes',
     'btnFacReset':'Réinitialisation d\'usine',
     'tipFacReset':''' Après la réinitialisation d'usine, vous devrez effectuer l'étalonnage des articulations. Veuillez vous référer à :
      https://docs.petoi.com/joint-calibration ''',
@@ -1299,11 +1342,12 @@ Vous trouverez plus de détails à l'adresse https://docs.petoi.com/upload-firmw
 
     'msgNoneAvrdude': '''Avrdude n'est pas installé. Veuillez d'abord installer avrdude ! Pour plus de détails, veuillez consulter :
     https://docs.petoi.com/desktop-app/firmware-uploader#install-avrdude-in-the-linux-os''',
+    'msgNoneEsptool':'Il n\'y a pas d\'estool. Veuillez d\'abord installer esptool!',
 
     'title Version': 'Informations sur la version',
     'msgVersion': 'Version : ' + versionNum + '\n'+
     '''Outil de téléchargement du micrologiciel pour OpenCat
-    Copyright © 2018-2023
+    Copyright © 2018-2024
     Tous droits réservés Petoi LLC
     https://www.petoi.com\n''' + dateStr,
 
@@ -1367,6 +1411,8 @@ Vous trouverez plus de détails à l'adresse https://docs.petoi.com/upload-firmw
 
     'tipImgWiring':'Faites attention à l\'emplacement et à la direction des prises de servomoteur\nMaintenez le bouton de la batterie enfoncé pour allumer l\'alimentation\nCliquez sur "Calibrer" pour faire tourner tous les servomoteurs à l\'état de calibration\nFixez les jambes et la tête perpendiculairement\nUtilisez le curseur pour aligner les bords des jambes et la règle de référence parallèlement',
     'tipImgPosture':'Basculez entre les postures pour tester les résultats de calibration\nEnregistrez les offsets à temps\nAucune calibration nécessaire à l\'avenir',
+    'Boot prompt': 'Invite de démarrage',
+    'poweron':'Le robot doit être alimenté par une batterie pour faire tourner ses articulations, \n\nC\'est VITAL pour contrôler le mouvement des articulations! \n\nLa LED jaune sur la carte mère doit être allumée, \n\nsinon, branchez la batterie et appuyez longuement sur \n\nson bouton pendant 3 secondes pour allumer le robot.\n\n',
 }
 
 textJP={
@@ -1387,6 +1433,10 @@ textJP={
     'Creator Information':'制作者情報',
     'Creator':'制作者',
     'Location':'場所',
+    'Nature': '自然',
+    'Earth': '地球',
+    'InputCreator': '作成者のニックネームを入力してください',
+    'InputLocation': '作成者の所在地を入力してください',
     'Exit':'終了',
     'Help':'ヘルプ',
     'About':'について',
@@ -1464,7 +1514,13 @@ textJP={
 
     'Manual mode':'マニュアルモード',
     'Replug mode':'リプラグモード',
-    'Replug prompt':'警告：接続に失敗しました！\n\n* メインボードがコンピュータに接続されていない場合：\n\n以下のボタンをクリックしてください。 USBケーブルをメインボードに接続し、他の端をコンピュータに接続してください。\n\n* メインボードがすでにUSBケーブルを介してコンピュータに接続されている場合：\n\n1. コンピュータがUSBデバイスを認識できることを確認します。\n詳細は、https://docs.petoi.com/upload-firmwareを参照してください。\n\n2. 以下のボタンをクリックした後、USBケーブルをコンピュータ側から抜き、再び接続します。',
+    'Replug prompt':'''警告：接続に失敗しました！\n\n
+* メインボードがコンピュータに接続されていない場合：\n
+以下のボタンをクリックしてください。 USBケーブルをメインボードに接続し、他の端をコンピュータに接続してください。\n\n
+* メインボードがすでにUSBケーブルを介してコンピュータに接続されている場合：\n
+1. コンピュータがUSBデバイスを認識できることを確認します。\n
+詳細は、https://docs.petoi.com/upload-firmwareを参照してください。\n
+2. 以下のボタンをクリックした後、USBケーブルをコンピュータ側から抜き、再び接続します。''',
     'Confirm':'確認',
     'Counting down to manual mode: ':'マニュアルモードまでのカウントダウン：',
     'Info':'情報',
@@ -1499,6 +1555,7 @@ textJP={
     'rbnCamera': 'カメラ',
     'Parameters': 'パラメーター',
     'Main function': 'メイン機能',
+    'Time consuming': '約30秒かかります',
     'btnFacReset': '工場出荷時設定に戻す',
     'tipFacReset':'ファクトリーリセット後、関節のキャリブレーションを行う必要があります。詳細は次を参照してください：https://docs.petoi.com/joint-calibration',
     'btnUpgrade':'ファームウェアのアップグレード',
@@ -1513,11 +1570,12 @@ textJP={
     'msgFileDir':'リリースフォルダを選択してください！',
     'msgPort':'正しいシリアルポートを選択してください！',
     'msgNoneAvrdude':'avrdudeがありません。まずavrdudeをインストールしてください！詳細については次を参照してください：https://docs.petoi.com/desktop-app/firmware-uploader#install-avrdude-in-the-linux-os',
+    'msgNoneEsptool':'エスプツールはありません。 最初に esptool をインストールしてください。',
     'titleVersion':'バージョン情報',
 
     'msgVersion':'バージョン：' + versionNum + '\n'+
 '''OpenCat用のファームウェアアップロードツール
-著作権 © 2018-2023
+著作権 © 2018-2024
 全著作権 Petoi LLC
 https://www.petoi.com\n''' + dateStr,
 
@@ -1579,6 +1637,8 @@ https://www.petoi.com\n''' + dateStr,
 
     'tipImgWiring':'サーボプラグの位置と向きに注意してください\nバッテリーのボタンを長押しして電源をオンにします\n「キャリブレーション」をクリックしてすべてのサーボをキャリブレーション状態に回転させます\n脚と頭を垂直に取り付けます\nスライダーを使用して脚のエッジと参照定規を平行に揃えます',
     'tipImgPosture':'ポーズを切り替えてキャリブレーションの結果をテストします\nオフセットをタイムリーに保存します\n将来のキャリブレーションは不要です',
+    'Boot prompt': 'ブートプロンプト',
+    'poweron':'ロボットは、関節を回転させるためにバッテリーが必要です，\n\nこれは関節運動を制御するために不可欠です！\n\nメインボードの黄色い LED が点灯している必要があります, \n\nそれ以外の場合は、バッテリーを 接続し、ボタンを \n\n3 秒間長押ししてロボットの電源をオンにします。\n\n',
 }
 
 textIT = {
@@ -1599,6 +1659,10 @@ textIT = {
     'Creator Information':'Informazioni sul creatore',
     'Creator':'Creatore',
     'Location':'Posizione',
+    'Nature': 'Natura',
+    'Earth': 'Terra',
+    'InputCreator': 'Inserisci il nickname del creatore',
+    'InputLocation': 'Inserisci la posizione del creatore',
     'Exit':'Uscita',
     'Help':'Aiuto',
     'About':'Chi siamo',
@@ -1670,9 +1734,9 @@ textIT = {
 
     'Manual mode':'Modalità manuale',
     'Replug mode':'Modalità di ricarica',
-    'Replug prompt':'''ATTENZIONE: caricamento fallito!\n\n
+    'Replug prompt':'''ATTENZIONE: Connessione fallita!\n\n
 * Se la scheda principale NON è collegata al computer:\n
-Fare clic sul pulsante in basso. Collegare il cavo USB alla scheda principale, quindi collegare l\'altra estremità al COMPUTER.\n\n
+Fare clic sul pulsante in basso. Collegare il cavo USB alla scheda principale, quindi collegare l\'altra estremità al COMPUTER. \n\n
 * Se la scheda principale è già collegata al computer tramite un cavo USB:\n
 1. Verificare che il computer sia in grado di riconoscere il dispositivo USB.\n
 Ulteriori dettagli sono disponibili su https://docs.petoi.com/upload-firmware.\n
@@ -1712,6 +1776,7 @@ Ulteriori dettagli sono disponibili su https://docs.petoi.com/upload-firmware.\n
     'rbnCamera': 'Telecamera',
     'Parameters':'Parametri',
     'Main function':'Funzione principale',
+    'Time consuming': 'ci vorranno circa 30 secondi',
     'btnFacReset':'Ripristino delle impostazioni di fabbrica',
     'tipFacReset':''' Dopo il ripristino delle impostazioni di fabbrica, 
  è necessario eseguire la calibrazione del giunto, fare riferimento a: 
@@ -1732,10 +1797,11 @@ Ulteriori dettagli sono disponibili su https://docs.petoi.com/upload-firmware.\n
     'msgPort': 'Si prega di scegliere la porta seriale corretta!',
     'msgNoneAvrdude': '''Non c\'è avrdude. Si prega di installare avrdude all\'inizio! Per i dettagli, fare riferimento a:
     https://docs.petoi.com/desktop-app/firmware-uploader#install-avrdude-in-the-linux-os''',
+    'msgNoneEsptool':'Non esiste uno strumento esp. Si prega di installare esptool all\'inizio!',
     'titleVersion': 'Informazioni sulla versione',
     'msgVersion': 'Versione: ' + versionNum + '\n' +
     '''Strumento di caricamento del firmware per OpenCat
-    Diritto d'autore © 2018-2022
+    Diritto d'autore © 2018-2024
     Tutti i diritti riservati Petoi LLC
     https://www.petoi.com\n''' + dateStr,
     'reset joints?': 'Reimpostare gli offset dei giunti? (S/N)',
@@ -1798,6 +1864,8 @@ Ulteriori dettagli sono disponibili su https://docs.petoi.com/upload-firmware.\n
     
     'tipImgWiring':'Prestare attenzione alla posizione e alla direzione dei connettori dei servi\nPremere a lungo il pulsante della batteria per accendere l\'alimentazione\nFare clic su \"Calibra\" per ruotare tutti i servi allo stato di calibrazione\nAttacca le gambe e la testa perpendicolarmente\nUsa il cursore per allineare parallelamente i bordi delle gambe e il righello di riferimento',
     'tipImgPosture':'Passa da una postura all\'altra per testare i risultati della calibrazione\nSalva gli offset in tempo\nNon c\'è bisogno di calibrazione in futuro',
+    'Boot prompt': 'Richiesta di avvio',
+    'poweron':'Il robot deve essere alimentato a una batteria per ruotare le sue articolazioni, \n\nQuesto è fondamentale per il controllo del movimento delle articolazioni! \n\nLa spia LED gialla sulla scheda madre dovrebbe essere accesa, \n\naltrimenti, collega la batteria e premi a lungo il \n\npulsante per 3 secondi per accendere il robot. \n\n',
 }
 
 languageList = {
@@ -1805,9 +1873,9 @@ languageList = {
     'Simplified Chinese':textCN,
     'Traditional Chinese':textCN_TW,
     'German':textDE,
-    'Italian':textIT,
+    'Thai':textTH,
     'French':textFR,
     'Japanese':textJP,
-    'Thai':textTH,
+    'Italian':textIT,
     #to be added
 }

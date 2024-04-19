@@ -11,11 +11,11 @@ def txt(key):
 class Calibrator:
     def __init__(self,model,lan):
         self.calibratorReady = False
+        global language
+        language = lan
 #        global goodPorts
         connectPort(goodPorts)
         self.model = config.model_
-        global language
-        language = lan
         self.winCalib = Tk()
         self.winCalib.title(txt('calibTitle'))
         self.winCalib.geometry('+200+100')
@@ -23,6 +23,7 @@ class Calibrator:
         self.calibSliders = list()
         self.OSname = self.winCalib.call('tk', 'windowingsystem')
         if self.OSname == 'win32':
+            self.winCalib.iconbitmap(resourcePath + 'Petoi.ico')
             self.calibButtonW = 8
         else:
             self.calibButtonW = 4
@@ -109,6 +110,7 @@ class Calibrator:
         self.winCalib.update()
         self.calibratorReady = True
         self.winCalib.protocol('WM_DELETE_WINDOW', self.closeCalib)
+        self.winCalib.focus_force()    # force the main interface to get focus
         self.winCalib.mainloop()
 
     def calibFun(self, cmd):
